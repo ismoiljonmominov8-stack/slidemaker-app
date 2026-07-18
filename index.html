@@ -1050,6 +1050,93 @@ function PlanCard({ label, price, onClick, accent, best }) {
 --------------------------------------------------------------- */
 const ADMIN_HASH = "#slidemaker-admin-2026";
 
+function StatsTab({ usage, revenue, loading, confirmKind, setConfirmKind, clearingKind, clearHistory }) {
+  const HISTORY_ITEMS = [
+    { kind: "presentations", label: "Taqdimotlar tarixi" },
+    { kind: "payments", label: "To'lov so'rovlari tarixi" },
+    { kind: "usage", label: "Foydalanish (usage) jurnali" },
+  ];
+
+  if (loading && !usage && !revenue) {
+    return <div style={{ color: C.muted, textAlign: "center", padding: 40 }}>Yuklanmoqda...</div>;
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <GhostCard>
+        <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 15, marginBottom: 10 }}>💰 Daromad</div>
+        <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+          <StatBlock label="Bugun" value={`${(revenue?.today?.total || 0).toLocaleString()} so'm`} sub={`${revenue?.today?.count || 0} ta to'lov`} accent={C.gold} />
+          <StatBlock label="Jami" value={`${(revenue?.allTime?.total || 0).toLocaleString()} so'm`} sub={`${revenue?.allTime?.count || 0} ta to'lov`} accent={C.good} />
+        </div>
+      </GhostCard>
+
+      <GhostCard>
+        <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 15, marginBottom: 10 }}>⚡ AI Foydalanish (24 soat / jami)</div>
+        <div style={{ display: "flex", gap: 24, flexWrap: "wrap", marginBottom: 14 }}>
+          <StatBlock label="Bugungi so'rovlar" value={String(usage?.today?.calls || 0)} sub={`${usage?.today?.successes || 0} muvaffaqiyatli, ${usage?.today?.failures || 0} xato`} accent={C.violet} />
+          <StatBlock label="Bugungi tokenlar" value={(usage?.today?.tokens || 0).toLocaleString()} sub="taxminiy AI xarajat birligi" accent={C.violet} />
+          <StatBlock label="Jami so'rovlar" value={String(usage?.allTime?.calls || 0)} sub={`${usage?.allTime?.successes || 0} muvaffaqiyatli, ${usage?.allTime?.failures || 0} xato`} accent={C.muted} />
+        </div>
+        {usage?.byProviderToday?.length > 0 && (
+          <div>
+            <div style={{ color: C.muted, fontSize: 12, marginBottom: 6 }}>Bugun — provayder bo'yicha</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {usage.byProviderToday.map((p) => (
+                <div key={p.provider} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, background: C.bg2, borderRadius: 8, padding: "6px 10px" }}>
+                  <span className="sm-mono" style={{ color: C.text }}>{p.provider}</span>
+                  <span style={{ color: C.muted }}>{p.calls} so'rov · {p.tokens.toLocaleString()} token</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </GhostCard>
+
+      <GhostCard>
+        <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 15, marginBottom: 6 }}>🗑 Tarixni tozalash</div>
+        <div style={{ color: C.muted, fontSize: 12.5, marginBottom: 12 }}>Diqqat: bu amalni orqaga qaytarib bo'lmaydi.</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {HISTORY_ITEMS.map(({ kind, label }) => (
+            <div key={kind} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.bg2, borderRadius: 10, padding: "10px 12px" }}>
+              <span style={{ color: C.text, fontSize: 13.5 }}>{label}</span>
+              {confirmKind === kind ? (
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button
+                    onClick={() => clearHistory(kind)}
+                    disabled={clearingKind === kind}
+                    className="sm-btn"
+                    style={{ background: `${C.danger}22`, border: `1px solid ${C.danger}66`, color: C.danger, borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 12.5, fontWeight: 600 }}
+                  >
+                    {clearingKind === kind ? "..." : "Ha, tozalash"}
+                  </button>
+                  <button onClick={() => setConfirmKind(null)} className="sm-btn" style={{ background: "transparent", border: `1px solid ${C.line}`, color: C.muted, borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 12.5 }}>
+                    Bekor qilish
+                  </button>
+                </div>
+              ) : (
+                <button onClick={() => setConfirmKind(kind)} className="sm-btn" style={{ background: "transparent", border: `1px solid ${C.line}`, color: C.muted, borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 12.5 }}>
+                  Tozalash
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      </GhostCard>
+    </div>
+  );
+}
+
+function StatBlock({ label, value, sub, accent }) {
+  return (
+    <div>
+      <div style={{ color: C.muted, fontSize: 11.5 }}>{label}</div>
+      <div className="sm-display" style={{ color: accent, fontWeight: 700, fontSize: 22, marginTop: 2 }}>{value}</div>
+      {sub && <div style={{ color: C.muted, fontSize: 11 }}>{sub}</div>}
+    </div>
+  );
+}
+
 function AdminPanel() {
   const [authed, setAuthed] = useState(!!getAdminToken());
   const [pw, setPw] = useState("");
@@ -1060,6 +1147,11 @@ function AdminPanel() {
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
   const [savedMsg, setSavedMsg] = useState("");
+  const [usage, setUsage] = useState(null);
+  const [revenue, setRevenue] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(false);
+  const [clearingKind, setClearingKind] = useState(null);
+  const [confirmKind, setConfirmKind] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -1085,6 +1177,39 @@ function AdminPanel() {
     const t = setInterval(load, 5000);
     return () => clearInterval(t);
   }, [authed, load]);
+
+  const loadStats = useCallback(async () => {
+    setStatsLoading(true);
+    try {
+      const [u, r] = await Promise.all([
+        api("/api/admin/usage", { headers: { Authorization: `Bearer ${getAdminToken()}` } }),
+        api("/api/admin/revenue", { headers: { Authorization: `Bearer ${getAdminToken()}` } }),
+      ]);
+      setUsage(u);
+      setRevenue(r);
+    } catch { /* ignore */ }
+    setStatsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (!authed || tab !== "stats") return;
+    loadStats();
+    const t = setInterval(loadStats, 8000);
+    return () => clearInterval(t);
+  }, [authed, tab, loadStats]);
+
+  async function clearHistory(kind) {
+    setClearingKind(kind);
+    try {
+      await api(`/api/admin/history/${kind}`, { method: "DELETE", headers: { Authorization: `Bearer ${getAdminToken()}` } });
+      setConfirmKind(null);
+      if (kind === "usage") loadStats();
+      if (kind === "payments") load();
+    } catch (e) {
+      alert("Xatolik: " + e.message);
+    }
+    setClearingKind(null);
+  }
 
   async function login() {
     setLoginError("");
@@ -1149,7 +1274,7 @@ function AdminPanel() {
       </div>
       <div style={{ maxWidth: 820, margin: "0 auto", padding: "0 20px 60px" }}>
         <div style={{ display: "flex", gap: 8, marginBottom: 18 }}>
-          {[["slides", "Arizalar bo'limi"], ["sub", "Oylik obunachi arizalari"], ["card", "Karta sozlamalari"]].map(([id, label]) => (
+          {[["slides", "Arizalar bo'limi"], ["sub", "Oylik obunachi arizalari"], ["card", "Karta sozlamalari"], ["stats", "Statistika"]].map(([id, label]) => (
             <button key={id} onClick={() => setTab(id)} className="sm-btn" style={{ padding: "9px 14px", borderRadius: 10, border: `1px solid ${tab === id ? C.gold : C.line}`, background: tab === id ? C.goldSoft : C.card, color: tab === id ? C.gold : C.muted, cursor: "pointer", fontSize: 13 }}>{label}</button>
           ))}
         </div>
@@ -1162,6 +1287,16 @@ function AdminPanel() {
             <input value={cardName} onChange={(e) => setCardName(e.target.value)} placeholder="Familiya Ism" style={{ width: "100%", marginTop: 4, background: C.bg2, border: `1px solid ${C.line}`, borderRadius: 10, padding: 10, color: C.text }} />
             <NextBtn onClick={saveCard} label={savedMsg || "Saqlash"} />
           </GhostCard>
+        ) : tab === "stats" ? (
+          <StatsTab
+            usage={usage}
+            revenue={revenue}
+            loading={statsLoading}
+            confirmKind={confirmKind}
+            setConfirmKind={setConfirmKind}
+            clearingKind={clearingKind}
+            clearHistory={clearHistory}
+          />
         ) : loading && shown.length === 0 ? (
           <div style={{ color: C.muted, textAlign: "center", padding: 40 }}>Yuklanmoqda...</div>
         ) : shown.length === 0 ? (
