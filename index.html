@@ -7,12 +7,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
   html, body { margin: 0; padding: 0; background: #12141C; }
   #root { min-height: 100vh; }
 </style>
-<base target="_blank">
 </head>
 <body>
 <div id="root"></div>
@@ -20,11 +19,23 @@
 <script type="text/plain" id="app-source">
 const { useState, useEffect, useRef, useCallback } = React;
 
+/* ---------------------------------------------------------------
+   TOKENS
+   bg: deep ink navy · gold: warm brass accent (CTA) · violet: AI accent
+--------------------------------------------------------------- */
 const C = {
-  bg: "#12141C", bg2: "#181B26", card: "#1E212E",
-  line: "rgba(255,255,255,0.08)", gold: "#E8A33D", goldSoft: "rgba(232,163,61,0.14)",
-  violet: "#8B7FE8", violetSoft: "rgba(139,127,232,0.14)", text: "#F2F0EA",
-  muted: "#8B93A7", danger: "#E8635F", good: "#5FBF8C",
+  bg: "#12141C",
+  bg2: "#181B26",
+  card: "#1E212E",
+  line: "rgba(255,255,255,0.08)",
+  gold: "#E8A33D",
+  goldSoft: "rgba(232,163,61,0.14)",
+  violet: "#8B7FE8",
+  violetSoft: "rgba(139,127,232,0.14)",
+  text: "#F2F0EA",
+  muted: "#8B93A7",
+  danger: "#E8635F",
+  good: "#5FBF8C",
 };
 
 const FONTS = `
@@ -47,60 +58,156 @@ const FONTS = `
 input:focus, textarea:focus, button:focus-visible { outline: 2px solid ${C.gold}; outline-offset: 2px; }
 `;
 
+/* ---------------------------------------------------------------
+   TEXT
+--------------------------------------------------------------- */
 const T = {
   uz: {
-    appName: "SlideMaker", tagline: "Mavzuni kiriting — professional taqdimot tayyor",
-    btnCreate: "Yangi taqdimot yaratish", btnMine: "Mening taqdimotlarim", btnSub: "Oylik obuna",
-    back: "Orqaga", step1Title: "Slaydlar sonini tanlang", step2Title: "Dizaynni tanlang",
-    step3Title: "Rangni sozlang", step4Title: "Mavzu va tilni kiriting",
-    topicLabel: "Taqdimot mavzusi", topicPlaceholder: "Masalan: O'zbekistonda qayta tiklanuvchi energiya",
-    langLabel: "Til", next: "Keyingisi", generate: "Generatsiya qilish",
-    paymentTitle: "To'lovni tasdiqlang", slidesCount: "Slaydlar soni", price: "Narxi",
-    cardInfo: "To'lov uchun karta", cardName: "Kartа egasi", uploadCheck: "Chek rasmini yuklang",
-    send: "Yuborish", pendingTitle: "So'rov qabul qilindi", pendingText: "To'lovingiz admin tomonidan tekshirilmoqda. Iltimos kuting...",
-    declinedTitle: "To'lov rad etildi", declinedText: "Iltimos, chekni qayta yuboring yoki admin bilan bog'laning.",
-    tryAgain: "Qayta urinish", generating: "Taqdimot yaratilmoqda...", genStep: "slayd tayyorlanmoqda",
-    doneTitle: "Taqdimot tayyor!", downloadBtn: "Yuklab olish", goMine: "Taqdimotlarimga o'tish",
-    mineTitle: "Mening taqdimotlarim", mineEmpty: "Hozircha taqdimotlar yo'q. Birinchisini yarating!",
-    subTitle: "Oylik obuna", subMonthly: "1 oylik obuna", subYearly: "1 yillik obuna",
-    subChoose: "Tanlash", subActive: "Obuna faol", subPending: "Obuna tasdiqlanishi kutilmoqda",
-    slideCountUnit: "slayd", maxNote: "Maksimal 20 slayd",
+    appName: "SlideMaker",
+    tagline: "Mavzuni kiriting — professional taqdimot tayyor",
+    btnCreate: "Yangi taqdimot yaratish",
+    btnMine: "Mening taqdimotlarim",
+    btnSub: "Oylik obuna",
+    back: "Orqaga",
+    step1Title: "Slaydlar sonini tanlang",
+    step2Title: "Dizaynni tanlang",
+    step3Title: "Rangni sozlang",
+    step4Title: "Mavzu va tilni kiriting",
+    topicLabel: "Taqdimot mavzusi",
+    topicPlaceholder: "Masalan: O'zbekistonda qayta tiklanuvchi energiya",
+    langLabel: "Til",
+    next: "Keyingisi",
+    generate: "Generatsiya qilish",
+    paymentTitle: "To'lovni tasdiqlang",
+    slidesCount: "Slaydlar soni",
+    price: "Narxi",
+    cardInfo: "To'lov uchun karta",
+    cardName: "Kartа egasi",
+    uploadCheck: "Chek rasmini yuklang",
+    send: "Yuborish",
+    pendingTitle: "So'rov qabul qilindi",
+    pendingText: "To'lovingiz admin tomonidan tekshirilmoqda. Iltimos kuting...",
+    declinedTitle: "To'lov rad etildi",
+    declinedText: "Iltimos, chekni qayta yuboring yoki admin bilan bog'laning.",
+    tryAgain: "Qayta urinish",
+    generating: "Taqdimot yaratilmoqda...",
+    genStep: "slayd tayyorlanmoqda",
+    reviewingTitle: "Yakuniy tekshiruv...",
+    reviewingText: "Slaydlar bir-biriga zid emasligi tekshirilmoqda",
+    doneTitle: "Taqdimot tayyor!",
+    downloadBtn: "Yuklab olish",
+    goMine: "Taqdimotlarimga o'tish",
+    mineTitle: "Mening taqdimotlarim",
+    mineEmpty: "Hozircha taqdimotlar yo'q. Birinchisini yarating!",
+    subTitle: "Oylik obuna",
+    subMonthly: "1 oylik obuna",
+    subYearly: "1 yillik obuna",
+    subChoose: "Tanlash",
+    subActive: "Obuna faol",
+    subPending: "Obuna tasdiqlanishi kutilmoqda",
+    slideCountUnit: "slayd",
+    maxNote: "Maksimal 20 slayd",
+    examplesTitle: "Namunalar",
+    examplesSubtitle: "Tayyor taqdimotlarga misollar — ko'rish uchun, yuklab bo'lmaydi",
+    examplePreviewNote: "Bu faqat namuna — yuklab olib bo'lmaydi",
   },
   ru: {
-    appName: "SlideMaker", tagline: "Введите тему — получите профессиональную презентацию",
-    btnCreate: "Создать новую презентацию", btnMine: "Мои презентации", btnSub: "Месячная подписка",
-    back: "Назад", step1Title: "Выберите количество слайдов", step2Title: "Выберите дизайн",
-    step3Title: "Настройте цвет", step4Title: "Введите тему и язык",
-    topicLabel: "Тема презентации", topicPlaceholder: "Например: Возобновляемая энергия в Узбекистане",
-    langLabel: "Язык", next: "Далее", generate: "Сгенерировать",
-    paymentTitle: "Подтвердите оплату", slidesCount: "Количество слайдов", price: "Цена",
-    cardInfo: "Карта для оплаты", cardName: "Владелец карты", uploadCheck: "Загрузите чек",
-    send: "Отправить", pendingTitle: "Заявка принята", pendingText: "Ваш платёж проверяется администратором. Пожалуйста, подождите...",
-    declinedTitle: "Платёж отклонён", declinedText: "Пожалуйста, отправьте чек заново или свяжитесь с админом.",
-    tryAgain: "Попробовать снова", generating: "Презентация создаётся...", genStep: "слайд готовится",
-    doneTitle: "Презентация готова!", downloadBtn: "Скачать", goMine: "Перейти к моим презентациям",
-    mineTitle: "Мои презентации", mineEmpty: "Пока нет презентаций. Создайте первую!",
-    subTitle: "Месячная подписка", subMonthly: "1 месяц", subYearly: "1 год",
-    subChoose: "Выбрать", subActive: "Подписка активна", subPending: "Ожидает подтверждения",
-    slideCountUnit: "слайдов", maxNote: "Максимум 20 слайдов",
+    appName: "SlideMaker",
+    tagline: "Введите тему — получите профессиональную презентацию",
+    btnCreate: "Создать новую презентацию",
+    btnMine: "Мои презентации",
+    btnSub: "Месячная подписка",
+    back: "Назад",
+    step1Title: "Выберите количество слайдов",
+    step2Title: "Выберите дизайн",
+    step3Title: "Настройте цвет",
+    step4Title: "Введите тему и язык",
+    topicLabel: "Тема презентации",
+    topicPlaceholder: "Например: Возобновляемая энергия в Узбекистане",
+    langLabel: "Язык",
+    next: "Далее",
+    generate: "Сгенерировать",
+    paymentTitle: "Подтвердите оплату",
+    slidesCount: "Количество слайдов",
+    price: "Цена",
+    cardInfo: "Карта для оплаты",
+    cardName: "Владелец карты",
+    uploadCheck: "Загрузите чек",
+    send: "Отправить",
+    pendingTitle: "Заявка принята",
+    pendingText: "Ваш платёж проверяется администратором. Пожалуйста, подождите...",
+    declinedTitle: "Платёж отклонён",
+    declinedText: "Пожалуйста, отправьте чек заново или свяжитесь с админом.",
+    tryAgain: "Попробовать снова",
+    generating: "Презентация создаётся...",
+    genStep: "слайд готовится",
+    reviewingTitle: "Финальная проверка...",
+    reviewingText: "Проверяем, чтобы слайды не противоречили друг другу",
+    doneTitle: "Презентация готова!",
+    downloadBtn: "Скачать",
+    goMine: "Перейти к моим презентациям",
+    mineTitle: "Мои презентации",
+    mineEmpty: "Пока нет презентаций. Создайте первую!",
+    subTitle: "Месячная подписка",
+    subMonthly: "1 месяц",
+    subYearly: "1 год",
+    subChoose: "Выбрать",
+    subActive: "Подписка активна",
+    subPending: "Ожидает подтверждения",
+    slideCountUnit: "слайдов",
+    maxNote: "Максимум 20 слайдов",
+    examplesTitle: "Примеры",
+    examplesSubtitle: "Примеры готовых презентаций — только для просмотра, без скачивания",
+    examplePreviewNote: "Это только пример — скачать нельзя",
   },
   en: {
-    appName: "SlideMaker", tagline: "Enter a topic — get a professional presentation",
-    btnCreate: "Create new presentation", btnMine: "My presentations", btnSub: "Monthly subscription",
-    back: "Back", step1Title: "Choose number of slides", step2Title: "Choose a design",
-    step3Title: "Customize color", step4Title: "Enter topic and language",
-    topicLabel: "Presentation topic", topicPlaceholder: "e.g. Renewable energy in Uzbekistan",
-    langLabel: "Language", next: "Next", generate: "Generate",
-    paymentTitle: "Confirm payment", slidesCount: "Slide count", price: "Price",
-    cardInfo: "Payment card", cardName: "Card holder", uploadCheck: "Upload receipt photo",
-    send: "Send", pendingTitle: "Request received", pendingText: "Your payment is being reviewed by the admin. Please wait...",
-    declinedTitle: "Payment declined", declinedText: "Please resend the receipt or contact the admin.",
-    tryAgain: "Try again", generating: "Building your presentation...", genStep: "slide being prepared",
-    doneTitle: "Presentation ready!", downloadBtn: "Download", goMine: "Go to my presentations",
-    mineTitle: "My presentations", mineEmpty: "No presentations yet. Create your first one!",
-    subTitle: "Monthly subscription", subMonthly: "1 month", subYearly: "1 year",
-    subChoose: "Choose", subActive: "Subscription active", subPending: "Approval pending",
-    slideCountUnit: "slides", maxNote: "Maximum 20 slides",
+    appName: "SlideMaker",
+    tagline: "Enter a topic — get a professional presentation",
+    btnCreate: "Create new presentation",
+    btnMine: "My presentations",
+    btnSub: "Monthly subscription",
+    back: "Back",
+    step1Title: "Choose number of slides",
+    step2Title: "Choose a design",
+    step3Title: "Customize color",
+    step4Title: "Enter topic and language",
+    topicLabel: "Presentation topic",
+    topicPlaceholder: "e.g. Renewable energy in Uzbekistan",
+    langLabel: "Language",
+    next: "Next",
+    generate: "Generate",
+    paymentTitle: "Confirm payment",
+    slidesCount: "Slide count",
+    price: "Price",
+    cardInfo: "Payment card",
+    cardName: "Card holder",
+    uploadCheck: "Upload receipt photo",
+    send: "Send",
+    pendingTitle: "Request received",
+    pendingText: "Your payment is being reviewed by the admin. Please wait...",
+    declinedTitle: "Payment declined",
+    declinedText: "Please resend the receipt or contact the admin.",
+    tryAgain: "Try again",
+    generating: "Building your presentation...",
+    genStep: "slide being prepared",
+    reviewingTitle: "Final review...",
+    reviewingText: "Checking slides don't contradict each other",
+    doneTitle: "Presentation ready!",
+    downloadBtn: "Download",
+    goMine: "Go to my presentations",
+    mineTitle: "My presentations",
+    mineEmpty: "No presentations yet. Create your first one!",
+    subTitle: "Monthly subscription",
+    subMonthly: "1 month",
+    subYearly: "1 year",
+    subChoose: "Choose",
+    subActive: "Subscription active",
+    subPending: "Approval pending",
+    slideCountUnit: "slides",
+    maxNote: "Maximum 20 slides",
+    examplesTitle: "Examples",
+    examplesSubtitle: "Sample presentations — preview only, can't be downloaded",
+    examplePreviewNote: "This is a sample only — not downloadable",
   },
 };
 
@@ -114,8 +221,15 @@ const DESIGNS = [
   { id: "sunset", name: "Sunset", accent: "#F0955A", bg: "#1C1315", style: "gradient" },
 ];
 
-function getPrice(count) { if (count <= 10) return 3000; if (count <= 15) return 5000; return 10000; }
-function uid() { return Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
+function getPrice(count) {
+  if (count <= 10) return 3000;
+  if (count <= 15) return 5000;
+  return 10000;
+}
+
+function uid() {
+  return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+}
 
 async function resizeImageToBase64(file, maxW = 700, quality = 0.72) {
   return new Promise((resolve, reject) => {
@@ -125,44 +239,97 @@ async function resizeImageToBase64(file, maxW = 700, quality = 0.72) {
       img.onload = () => {
         const scale = Math.min(1, maxW / img.width);
         const canvas = document.createElement("canvas");
-        canvas.width = img.width * scale; canvas.height = img.height * scale;
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         resolve(canvas.toDataURL("image/jpeg", quality));
       };
-      img.onerror = reject; img.src = e.target.result;
+      img.onerror = reject;
+      img.src = e.target.result;
     };
-    reader.onerror = reject; reader.readAsDataURL(file);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
   });
 }
 
-const API_BASE = "https://slidemaker-backend-1.onrender.com";
-function getAdminToken() { return localStorage.getItem("sm_admin_token") || ""; }
+// ----------------------------------------------------------------
+// BACKEND API CLIENT
+// Change API_BASE to wherever you deploy the /backend folder.
+// ----------------------------------------------------------------
+const API_BASE = "https://slidemaker-backend-dx2u.onrender.com";
+
+function getAdminToken() {
+  return localStorage.getItem("sm_admin_token") || "";
+}
 
 async function api(path, opts = {}) {
-  const res = await fetch(`${API_BASE}${path}`, { ...opts, headers: { ...(opts.headers || {}) } });
-  if (!res.ok) { const body = await res.text().catch(() => ""); throw new Error(`API ${path} failed (${res.status}): ${body}`); }
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...opts,
+    headers: { ...(opts.headers || {}) },
+  });
+  if (!res.ok) {
+    const bodyText = await res.text().catch(() => "");
+    let bodyJson = null;
+    try { bodyJson = JSON.parse(bodyText); } catch { /* not JSON, that's fine */ }
+    const err = new Error(bodyJson?.message || `API ${path} failed (${res.status}): ${bodyText}`);
+    err.status = res.status;
+    err.data = bodyJson;
+    throw err;
+  }
   return res.json();
 }
 
 function apiJson(path, method, body, extraHeaders = {}) {
-  return api(path, { method, headers: { "Content-Type": "application/json", ...extraHeaders }, body: JSON.stringify(body) });
+  return api(path, {
+    method,
+    headers: { "Content-Type": "application/json", ...extraHeaders },
+    body: JSON.stringify(body),
+  });
 }
 
 function getOrCreateUserId() {
   let id = localStorage.getItem("sm_user_id");
-  if (!id) { id = uid(); localStorage.setItem("sm_user_id", id); }
+  if (!id) {
+    id = uid();
+    localStorage.setItem("sm_user_id", id);
+  }
   return id;
 }
 
+/* ---------------------------------------------------------------
+   BACKGROUND — drifting slide-card shapes (signature element)
+--------------------------------------------------------------- */
 function AnimatedBackground() {
   return (
     <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 0 }}>
       <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 20% 20%, ${C.violetSoft}, transparent 45%), radial-gradient(circle at 80% 70%, ${C.goldSoft}, transparent 45%), ${C.bg}` }} />
       {[...Array(6)].map((_, i) => {
-        const w = 90 + (i % 3) * 30, h = w * 0.62, left = (i * 17 + 5) % 92, top = (i * 23 + 8) % 85, rot = (i * 13) % 30 - 15, anim = i % 2 === 0 ? "drift" : "drift2", dur = 10 + i * 2, color = i % 2 === 0 ? C.gold : C.violet;
+        const w = 90 + (i % 3) * 30;
+        const h = w * 0.62;
+        const left = (i * 17 + 5) % 92;
+        const top = (i * 23 + 8) % 85;
+        const rot = (i * 13) % 30 - 15;
+        const anim = i % 2 === 0 ? "drift" : "drift2";
+        const dur = 10 + i * 2;
+        const color = i % 2 === 0 ? C.gold : C.violet;
         return (
-          <div key={i} style={{ position: "absolute", left: `${left}%`, top: `${top}%`, width: w, height: h, borderRadius: 10, border: `1.5px solid ${color}33`, background: `linear-gradient(135deg, ${color}14, transparent)`, transform: `rotate(${rot}deg)`, animation: `${anim} ${dur}s ease-in-out infinite`, backdropFilter: "blur(2px)" }}>
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              left: `${left}%`,
+              top: `${top}%`,
+              width: w,
+              height: h,
+              borderRadius: 10,
+              border: `1.5px solid ${color}33`,
+              background: `linear-gradient(135deg, ${color}14, transparent)`,
+              transform: `rotate(${rot}deg)`,
+              animation: `${anim} ${dur}s ease-in-out infinite`,
+              backdropFilter: "blur(2px)",
+            }}
+          >
             <div style={{ margin: "10px 12px", height: 4, width: "55%", borderRadius: 2, background: `${color}55` }} />
             <div style={{ margin: "0 12px", height: 3, width: "35%", borderRadius: 2, background: `${color}33` }} />
           </div>
@@ -172,6 +339,9 @@ function AnimatedBackground() {
   );
 }
 
+/* ---------------------------------------------------------------
+   REUSABLE UI
+--------------------------------------------------------------- */
 function TopBar({ lang, setLang, onBack, title }) {
   const t = T[lang];
   return (
@@ -182,11 +352,29 @@ function TopBar({ lang, setLang, onBack, title }) {
             <Icon glyph="←" size={18} />
           </button>
         )}
-        <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 18, letterSpacing: 0.3 }}>{title || t.appName}</div>
+        <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 18, letterSpacing: 0.3 }}>
+          {title || t.appName}
+        </div>
       </div>
       <div style={{ display: "flex", gap: 6, background: C.card, border: `1px solid ${C.line}`, borderRadius: 10, padding: 4 }}>
         {["uz", "ru", "en"].map((l) => (
-          <button key={l} onClick={() => setLang(l)} className="sm-mono sm-btn" style={{ padding: "5px 10px", borderRadius: 7, border: "none", cursor: "pointer", fontSize: 12, background: lang === l ? C.gold : "transparent", color: lang === l ? "#1a1200" : C.muted, fontWeight: 600 }}>{l.toUpperCase()}</button>
+          <button
+            key={l}
+            onClick={() => setLang(l)}
+            className="sm-mono sm-btn"
+            style={{
+              padding: "5px 10px",
+              borderRadius: 7,
+              border: "none",
+              cursor: "pointer",
+              fontSize: 12,
+              background: lang === l ? C.gold : "transparent",
+              color: lang === l ? "#1a1200" : C.muted,
+              fontWeight: 600,
+            }}
+          >
+            {l.toUpperCase()}
+          </button>
         ))}
       </div>
     </div>
@@ -194,40 +382,128 @@ function TopBar({ lang, setLang, onBack, title }) {
 }
 
 function GhostCard({ children, style }) {
-  return <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 18, padding: 22, ...style }}>{children}</div>;
+  return (
+    <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 18, padding: 22, ...style }}>
+      {children}
+    </div>
+  );
 }
 
+/* ---------------------------------------------------------------
+   HOME
+--------------------------------------------------------------- */
 function Home({ lang, setLang, setView }) {
   const t = T[lang];
+  const [examples, setExamples] = useState([]);
+  const [examplesLoading, setExamplesLoading] = useState(true);
+  const [previewExample, setPreviewExample] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setExamples(await api("/api/examples"));
+      } catch { /* homepage still works fine without examples */ }
+      setExamplesLoading(false);
+    })();
+  }, []);
+
   return (
     <div style={{ minHeight: "100vh", position: "relative" }}>
       <AnimatedBackground />
       <div style={{ position: "relative", zIndex: 2 }}>
         <TopBar lang={lang} setLang={setLang} title={t.appName} />
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "60px 20px 40px", textAlign: "center" }}>
-          <div className="sm-fadeup" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: C.violetSoft, border: `1px solid ${C.violet}55`, color: C.violet, padding: "6px 14px", borderRadius: 999, fontSize: 12, marginBottom: 22 }}><Icon glyph="✦" size={13} /> AI · {t.appName}</div>
-          <h1 className="sm-display sm-fadeup" style={{ color: C.text, fontSize: "clamp(32px,6vw,54px)", fontWeight: 700, margin: 0, lineHeight: 1.08, maxWidth: 720 }}>{t.appName}</h1>
-          <p className="sm-body sm-fadeup" style={{ color: C.muted, fontSize: 17, marginTop: 14, maxWidth: 460 }}>{t.tagline}</p>
+          <div className="sm-fadeup" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: C.violetSoft, border: `1px solid ${C.violet}55`, color: C.violet, padding: "6px 14px", borderRadius: 999, fontSize: 12, marginBottom: 22 }} >
+            <Icon glyph="✦" size={13} /> AI · {t.appName}
+          </div>
+          <h1 className="sm-display sm-fadeup" style={{ color: C.text, fontSize: "clamp(32px,6vw,54px)", fontWeight: 700, margin: 0, lineHeight: 1.08, maxWidth: 720 }}>
+            {t.appName}
+          </h1>
+          <p className="sm-body sm-fadeup" style={{ color: C.muted, fontSize: 17, marginTop: 14, maxWidth: 460 }}>
+            {t.tagline}
+          </p>
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 18, justifyContent: "center", padding: "10px 20px 80px", maxWidth: 900, margin: "0 auto" }}>
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 18, justifyContent: "center", padding: "10px 20px 60px", maxWidth: 900, margin: "0 auto" }}>
           <HomeButton icon={<Icon glyph="✦" size={22} />} label={t.btnCreate} accent={C.gold} onClick={() => setView("create")} />
           <HomeButton icon={<Icon glyph="📁" size={22} />} label={t.btnMine} accent={C.violet} onClick={() => setView("mine")} />
           <HomeButton icon={<Icon glyph="♛" size={22} />} label={t.btnSub} accent="#C9A876" onClick={() => setView("sub")} />
         </div>
+
+        {!examplesLoading && examples.length > 0 && (
+          <div style={{ padding: "0 20px 70px", maxWidth: 1100, margin: "0 auto" }}>
+            <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 18, marginBottom: 4, textAlign: "center" }}>{t.examplesTitle}</div>
+            <div style={{ color: C.muted, fontSize: 13, textAlign: "center", marginBottom: 20 }}>{t.examplesSubtitle}</div>
+            <div style={{ display: "flex", gap: 14, overflowX: "auto", paddingBottom: 8 }}>
+              {examples.map((ex) => (
+                <button
+                  key={ex.id}
+                  onClick={() => setPreviewExample(ex)}
+                  className="sm-btn"
+                  style={{
+                    flex: "0 0 220px", textAlign: "left", cursor: "pointer",
+                    background: C.card, border: `1px solid ${C.line}`, borderRadius: 14, padding: 16,
+                  }}
+                >
+                  <div style={{ width: 32, height: 4, borderRadius: 2, background: ex.color || C.gold, marginBottom: 12 }} />
+                  <div className="sm-display" style={{ color: C.text, fontWeight: 600, fontSize: 14.5, marginBottom: 6 }}>{ex.title}</div>
+                  <div className="sm-mono" style={{ color: C.muted, fontSize: 11.5 }}>{ex.slides?.length || 0} {t.slideCountUnit}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+
+      {previewExample && (
+        <div
+          onClick={() => setPreviewExample(null)}
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}
+        >
+          <div onClick={(e) => e.stopPropagation()} style={{ background: C.bg, border: `1px solid ${C.line}`, borderRadius: 18, padding: 22, maxWidth: 640, width: "100%", maxHeight: "85vh", overflowY: "auto" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+              <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 17 }}>{previewExample.title}</div>
+              <button onClick={() => setPreviewExample(null)} className="sm-btn" style={{ background: C.bg2, border: `1px solid ${C.line}`, borderRadius: 8, padding: 6, cursor: "pointer", color: C.muted }}>
+                <Icon glyph="✕" size={14} />
+              </button>
+            </div>
+            <div style={{ color: C.muted, fontSize: 12, marginBottom: 6 }}>{t.examplePreviewNote}</div>
+            <SlidePreviewList slides={previewExample.slides} color={previewExample.color || C.gold} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 function HomeButton({ icon, label, accent, onClick }) {
   return (
-    <button onClick={onClick} className="sm-btn sm-fadeup" style={{ width: 240, background: `linear-gradient(160deg, ${C.card}, ${C.bg2})`, border: `1px solid ${C.line}`, borderRadius: 18, padding: "28px 20px", color: C.text, cursor: "pointer", textAlign: "left", boxShadow: "0 10px 30px rgba(0,0,0,0.25)" }}>
-      <div style={{ width: 42, height: 42, borderRadius: 12, background: `${accent}22`, color: accent, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>{icon}</div>
+    <button
+      onClick={onClick}
+      className="sm-btn sm-fadeup"
+      style={{
+        width: 240,
+        background: `linear-gradient(160deg, ${C.card}, ${C.bg2})`,
+        border: `1px solid ${C.line}`,
+        borderRadius: 18,
+        padding: "28px 20px",
+        color: C.text,
+        cursor: "pointer",
+        textAlign: "left",
+        boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
+      }}
+    >
+      <div style={{ width: 42, height: 42, borderRadius: 12, background: `${accent}22`, color: accent, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
+        {icon}
+      </div>
       <div className="sm-display" style={{ fontWeight: 600, fontSize: 16.5 }}>{label}</div>
     </button>
   );
 }
 
+/* ---------------------------------------------------------------
+   CREATE FLOW
+--------------------------------------------------------------- */
 function CreateFlow({ lang, setLang, setView, cardInfo, userId, refreshMine }) {
   const t = T[lang];
   const [step, setStep] = useState(1);
@@ -238,17 +514,23 @@ function CreateFlow({ lang, setLang, setView, cardInfo, userId, refreshMine }) {
   const [checkImg, setCheckImg] = useState(null);
   const [checkFile, setCheckFile] = useState(null);
   const [requestId, setRequestId] = useState(null);
-  const [status, setStatus] = useState(null);
+  const [status, setStatus] = useState(null); // pending | approved | declined
   const [slides, setSlides] = useState([]);
   const [genProgress, setGenProgress] = useState(0);
   const [genTotal, setGenTotal] = useState(0);
+  const [reviewing, setReviewing] = useState(false);
   const [presTitle, setPresTitle] = useState("");
   const pollRef = useRef(null);
 
-  useEffect(() => { return () => clearInterval(pollRef.current); }, []);
+  useEffect(() => {
+    return () => clearInterval(pollRef.current);
+  }, []);
 
   function next() { setStep((s) => s + 1); }
-  function back() { if (step === 1) setView("home"); else setStep((s) => s - 1); }
+  function back() {
+    if (step === 1) setView("home");
+    else setStep((s) => s - 1);
+  }
 
   async function submitPayment() {
     try {
@@ -272,29 +554,91 @@ function CreateFlow({ lang, setLang, setView, cardInfo, userId, refreshMine }) {
           if (req && req.status !== "pending") {
             clearInterval(pollRef.current);
             setStatus(req.status);
-            if (req.status === "approved") startGeneration(created.id);
+            if (req.status === "approved") startGeneration();
           }
-        } catch { }
+        } catch { /* keep polling on transient errors */ }
       }, 3500);
-    } catch (e) { alert("To'lov so'rovini yuborishda xatolik: " + e.message); }
+    } catch (e) {
+      if (e.status === 429 && e.data?.error === "daily_limit_reached") {
+        alert(e.message);
+      } else {
+        alert("To'lov so'rovini yuborishda xatolik: " + e.message);
+      }
+    }
   }
 
-  async function startGeneration(paymentRequestId) {
+  async function startGeneration() {
     setStep(7);
     setGenTotal(count);
     setGenProgress(0);
     const generated = [];
     for (let i = 0; i < count; i++) {
-      const slide = await generateSlideContent(topic, i + 1, count, lang, userId, paymentRequestId);
+      const idx = i + 1;
+      const layout = getLayoutForIndex(idx, count);
+      // Full detail for the last 4 slides (keeps prompt short) PLUS every
+      // earlier slide's title (cheap to include, prevents long-range
+      // duplicate titles on decks with 15+ slides where the 4-slide
+      // window would otherwise "forget" what slide 5 already covered).
+      const recentDetailed = generated
+        .slice(-4)
+        .map((s) => [s.title, s.subtitle, s.quoteText, ...(s.bullets || []).slice(0, 1)].filter(Boolean).join(" — "));
+      const olderTitles = generated
+        .slice(0, -4)
+        .map((s) => s.title)
+        .filter(Boolean);
+      const avoid = [...olderTitles, ...recentDetailed];
+      let slide = await generateSlideContent(topic, idx, count, lang, layout, avoid);
+      const isDuplicate = generated.some((s) => (s.title || "").trim().toLowerCase() === (slide.title || "").trim().toLowerCase());
+      if (isDuplicate) {
+        // Belt-and-suspenders: the avoid-list should prevent this, but if the
+        // model repeated a title verbatim anyway, ask once more with a sharper warning.
+        slide = await generateSlideContent(topic, idx, count, lang, layout, [
+          ...avoid,
+          `(retry) Your previous attempt repeated the exact title "${slide.title}" — you MUST use a different, more specific title this time.`,
+        ]);
+      }
       generated.push(slide);
       setGenProgress(i + 1);
       setSlides([...generated]);
     }
+
+    // One extra pass: review the whole deck together for contradictions
+    // (e.g. two slides citing different article numbers for "the same"
+    // law) and severe thematic redundancy that per-slide generation can't
+    // see, since it only ever looks at a short recent-history window.
+    setReviewing(true);
+    try {
+      const reviewSlides = generated.map((s, i) => ({
+        index: i + 1, title: s.title, subtitle: s.subtitle, quoteText: s.quoteText,
+        bullets: s.bullets, left: s.left, right: s.right,
+      }));
+      const { problems } = await apiJson("/api/generate/consistency-check", "POST", { topic, lang, slides: reviewSlides });
+      for (const problem of problems || []) {
+        const i = problem.index - 1;
+        if (i < 0 || i >= generated.length) continue;
+        const layout = getLayoutForIndex(problem.index, count);
+        const avoid = generated
+          .filter((_, idx) => idx !== i)
+          .map((s) => [s.title, s.subtitle, s.quoteText, ...(s.bullets || []).slice(0, 1)].filter(Boolean).join(" — "));
+        avoid.push(`(consistency review) The previous version of this exact slide had this problem: ${problem.reason} — fix it directly and make sure it no longer conflicts with or repeats any other slide.`);
+        const fixed = await generateSlideContent(topic, problem.index, count, lang, layout, avoid);
+        generated[i] = fixed;
+        setSlides([...generated]);
+      }
+    } catch (e) {
+      console.error("Consistency check failed (non-fatal, keeping original slides):", e);
+    }
+    setReviewing(false);
+
     const title = generated[0]?.title || topic;
     setPresTitle(title);
     try {
-      await apiJson("/api/presentations", "POST", { userId, topic, title, lang, design: design.id, color, slides: generated });
-    } catch (e) { console.error("Failed to save presentation:", e); }
+      await apiJson("/api/presentations", "POST", {
+        userId, topic, title, lang, design: design.id, color, slides: generated,
+      });
+    } catch (e) {
+      console.error("Failed to save presentation:", e);
+    }
     if (refreshMine) refreshMine();
     setStep(8);
   }
@@ -304,8 +648,9 @@ function CreateFlow({ lang, setLang, setView, cardInfo, userId, refreshMine }) {
       <TopBar lang={lang} setLang={setLang} onBack={back} title={t.appName} />
       <div style={{ maxWidth: 640, margin: "0 auto", padding: "10px 20px 60px" }}>
         <StepDots step={Math.min(step, 5)} total={5} />
+
         {step === 1 && (
-          <GhostCard style={{ marginTop: 20 }}>
+          <GhostCard style={{ marginTop: 20 }} >
             <h2 className="sm-display" style={{ color: C.text, marginTop: 0 }}>{t.step1Title}</h2>
             <p className="sm-mono" style={{ color: C.gold, fontSize: 34, margin: "18px 0 6px" }}>{count} <span style={{ fontSize: 14, color: C.muted }}>{t.slideCountUnit}</span></p>
             <input type="range" min={3} max={20} value={count} onChange={(e) => setCount(Number(e.target.value))} style={{ width: "100%", accentColor: C.gold }} />
@@ -313,12 +658,22 @@ function CreateFlow({ lang, setLang, setView, cardInfo, userId, refreshMine }) {
             <NextBtn onClick={next} label={t.next} />
           </GhostCard>
         )}
+
         {step === 2 && (
           <GhostCard style={{ marginTop: 20 }}>
             <h2 className="sm-display" style={{ color: C.text, marginTop: 0 }}>{t.step2Title}</h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(140px,1fr))", gap: 12, marginTop: 14 }}>
               {DESIGNS.map((d) => (
-                <button key={d.id} onClick={() => { setDesign(d); setColor(d.accent); }} className="sm-btn" style={{ cursor: "pointer", borderRadius: 14, padding: 0, overflow: "hidden", border: design.id === d.id ? `2px solid ${d.accent}` : `1px solid ${C.line}`, background: d.bg }}>
+                <button
+                  key={d.id}
+                  onClick={() => { setDesign(d); setColor(d.accent); }}
+                  className="sm-btn"
+                  style={{
+                    cursor: "pointer", borderRadius: 14, padding: 0, overflow: "hidden",
+                    border: design.id === d.id ? `2px solid ${d.accent}` : `1px solid ${C.line}`,
+                    background: d.bg,
+                  }}
+                >
                   <div style={{ height: 66, margin: 10, borderRadius: 8, border: `1px solid ${d.accent}55`, background: `linear-gradient(135deg, ${d.accent}22, transparent)`, position: "relative" }}>
                     <div style={{ position: "absolute", top: 8, left: 8, width: "60%", height: 4, borderRadius: 2, background: d.accent }} />
                     <div style={{ position: "absolute", top: 16, left: 8, width: "40%", height: 3, borderRadius: 2, background: `${d.accent}88` }} />
@@ -330,6 +685,7 @@ function CreateFlow({ lang, setLang, setView, cardInfo, userId, refreshMine }) {
             <NextBtn onClick={next} label={t.next} />
           </GhostCard>
         )}
+
         {step === 3 && (
           <GhostCard style={{ marginTop: 20 }}>
             <h2 className="sm-display" style={{ color: C.text, marginTop: 0, display: "flex", alignItems: "center", gap: 8 }}><Icon glyph="🎨" size={18} color={C.gold} />{t.step3Title}</h2>
@@ -342,14 +698,22 @@ function CreateFlow({ lang, setLang, setView, cardInfo, userId, refreshMine }) {
             <NextBtn onClick={next} label={t.next} />
           </GhostCard>
         )}
+
         {step === 4 && (
           <GhostCard style={{ marginTop: 20 }}>
             <h2 className="sm-display" style={{ color: C.text, marginTop: 0 }}>{t.step4Title}</h2>
             <label className="sm-body" style={{ color: C.muted, fontSize: 13 }}>{t.topicLabel}</label>
-            <textarea value={topic} onChange={(e) => setTopic(e.target.value)} placeholder={t.topicPlaceholder} rows={3} style={{ width: "100%", marginTop: 6, background: C.bg2, border: `1px solid ${C.line}`, borderRadius: 10, padding: 12, color: C.text, fontFamily: "Inter", fontSize: 14, resize: "vertical" }} />
+            <textarea
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              placeholder={t.topicPlaceholder}
+              rows={3}
+              style={{ width: "100%", marginTop: 6, background: C.bg2, border: `1px solid ${C.line}`, borderRadius: 10, padding: 12, color: C.text, fontFamily: "Inter", fontSize: 14, resize: "vertical" }}
+            />
             <NextBtn onClick={next} label={t.generate} disabled={!topic.trim()} />
           </GhostCard>
         )}
+
         {step === 5 && (
           <GhostCard style={{ marginTop: 20 }}>
             <h2 className="sm-display" style={{ color: C.text, marginTop: 0 }}>{t.paymentTitle}</h2>
@@ -362,33 +726,58 @@ function CreateFlow({ lang, setLang, setView, cardInfo, userId, refreshMine }) {
             </div>
             <div style={{ marginTop: 16 }}>
               <label className="sm-btn" style={{ display: "flex", alignItems: "center", gap: 10, border: `1px dashed ${C.line}`, borderRadius: 12, padding: 14, cursor: "pointer", color: C.muted }}>
-                <Icon glyph="⬆" size={18} />{checkImg ? "✓ " + t.uploadCheck : t.uploadCheck}
-                <input type="file" accept="image/*" hidden onChange={async (e) => { const f = e.target.files[0]; if (f) { setCheckFile(f); setCheckImg(await resizeImageToBase64(f)); } }} />
+                <Icon glyph="⬆" size={18} />
+                {checkImg ? "✓ " + t.uploadCheck : t.uploadCheck}
+                <input type="file" accept="image/*" hidden onChange={async (e) => {
+                  const f = e.target.files[0];
+                  if (f) { setCheckFile(f); setCheckImg(await resizeImageToBase64(f)); }
+                }} />
               </label>
               {checkImg && <img src={checkImg} alt="check" style={{ marginTop: 10, maxHeight: 160, borderRadius: 10, border: `1px solid ${C.line}` }} />}
             </div>
             <NextBtn onClick={submitPayment} label={t.send} disabled={!checkImg} />
           </GhostCard>
         )}
+
         {step === 6 && (
           <GhostCard style={{ marginTop: 20, textAlign: "center" }}>
             {status === "declined" ? (
-              <><Icon glyph="✕" size={40} color={C.danger} style={{ margin: "10px auto" }} /><h2 className="sm-display" style={{ color: C.text }}>{t.declinedTitle}</h2><p style={{ color: C.muted }}>{t.declinedText}</p><NextBtn onClick={() => { setStatus(null); setStep(5); setCheckImg(null); }} label={t.tryAgain} /></>
+              <>
+                <Icon glyph="✕" size={40} color={C.danger} style={{ margin: "10px auto" }} />
+                <h2 className="sm-display" style={{ color: C.text }}>{t.declinedTitle}</h2>
+                <p style={{ color: C.muted }}>{t.declinedText}</p>
+                <NextBtn onClick={() => { setStatus(null); setStep(5); setCheckImg(null); }} label={t.tryAgain} />
+              </>
             ) : (
-              <><Icon glyph="🕐" size={40} color={C.gold} style={{ margin: "10px auto", animation: "pulseGlow 1.6s ease-in-out infinite" }} /><h2 className="sm-display" style={{ color: C.text }}>{t.pendingTitle}</h2><p style={{ color: C.muted }}>{t.pendingText}</p></>
+              <>
+                <Icon glyph="🕐" size={40} color={C.gold} style={{ margin: "10px auto", animation: "pulseGlow 1.6s ease-in-out infinite" }} />
+                <h2 className="sm-display" style={{ color: C.text }}>{t.pendingTitle}</h2>
+                <p style={{ color: C.muted }}>{t.pendingText}</p>
+              </>
             )}
           </GhostCard>
         )}
+
         {step === 7 && (
           <GhostCard style={{ marginTop: 20, textAlign: "center" }}>
             <Spinner size={36} color={C.violet} style={{ margin: "10px auto" }} />
-            <h2 className="sm-display" style={{ color: C.text }}>{t.generating}</h2>
-            <p className="sm-mono" style={{ color: C.muted }}>{genProgress}/{genTotal} {t.genStep}</p>
-            <div style={{ height: 8, background: C.bg2, borderRadius: 6, overflow: "hidden", marginTop: 10 }}>
-              <div style={{ height: "100%", width: `${(genProgress / Math.max(genTotal, 1)) * 100}%`, background: C.violet, transition: "width .3s" }} />
-            </div>
+            {reviewing ? (
+              <>
+                <h2 className="sm-display" style={{ color: C.text }}>{t.reviewingTitle}</h2>
+                <p style={{ color: C.muted, fontSize: 13 }}>{t.reviewingText}</p>
+              </>
+            ) : (
+              <>
+                <h2 className="sm-display" style={{ color: C.text }}>{t.generating}</h2>
+                <p className="sm-mono" style={{ color: C.muted }}>{genProgress}/{genTotal} {t.genStep}</p>
+                <div style={{ height: 8, background: C.bg2, borderRadius: 6, overflow: "hidden", marginTop: 10 }}>
+                  <div style={{ height: "100%", width: `${(genProgress / Math.max(genTotal, 1)) * 100}%`, background: C.violet, transition: "width .3s" }} />
+                </div>
+              </>
+            )}
           </GhostCard>
         )}
+
         {step === 8 && (
           <GhostCard style={{ marginTop: 20 }}>
             <div style={{ textAlign: "center" }}>
@@ -419,14 +808,34 @@ function Row({ label, value, accent }) {
 function StepDots({ step, total }) {
   return (
     <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
-      {[...Array(total)].map((_, i) => <div key={i} style={{ height: 4, flex: 1, borderRadius: 2, background: i < step ? C.gold : C.line }} />)}
+      {[...Array(total)].map((_, i) => (
+        <div key={i} style={{ height: 4, flex: 1, borderRadius: 2, background: i < step ? C.gold : C.line }} />
+      ))}
     </div>
   );
 }
 
 function NextBtn({ onClick, label, disabled, icon, secondary, full = true }) {
   return (
-    <button onClick={onClick} disabled={disabled} className="sm-btn sm-display" style={{ marginTop: 20, width: full ? "100%" : "auto", flex: full ? undefined : 1, padding: "13px 18px", borderRadius: 12, border: secondary ? `1px solid ${C.line}` : "none", background: disabled ? "#3a3a3a" : secondary ? "transparent" : C.gold, color: secondary ? C.text : "#1a1200", fontWeight: 700, fontSize: 14, cursor: disabled ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="sm-btn sm-display"
+      style={{
+        marginTop: 20,
+        width: full ? "100%" : "auto",
+        flex: full ? undefined : 1,
+        padding: "13px 18px",
+        borderRadius: 12,
+        border: secondary ? `1px solid ${C.line}` : "none",
+        background: disabled ? "#3a3a3a" : secondary ? "transparent" : C.gold,
+        color: secondary ? C.text : "#1a1200",
+        fontWeight: 700,
+        fontSize: 14,
+        cursor: disabled ? "not-allowed" : "pointer",
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+      }}
+    >
       {icon}{label}
     </button>
   );
@@ -436,10 +845,34 @@ function SlidePreviewList({ slides, color }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 16, maxHeight: 420, overflowY: "auto" }}>
       {slides.map((s, i) => (
-        <div key={i} style={{ background: C.bg2, border: `1px solid ${C.line}`, borderLeft: `3px solid ${color}`, borderRadius: 10, padding: 14 }}>
-          <div className="sm-mono" style={{ color: color, fontSize: 11 }}>{String(i + 1).padStart(2, "0")}</div>
+        <div key={i} style={{ background: C.bg2, border: `1px solid ${C.line}`, borderRadius: 10, padding: 14 }}>
+          <div className="sm-mono" style={{ color: color, fontSize: 11 }}>{String(i + 1).padStart(2, "0")} · {s.layout || "content"}</div>
           <div className="sm-display" style={{ color: C.text, fontWeight: 600, marginTop: 2 }}>{s.title}</div>
-          <ul style={{ margin: "6px 0 0", paddingLeft: 18, color: C.muted, fontSize: 13 }}>{s.bullets?.map((b, j) => <li key={j}>{b}</li>)}</ul>
+
+          {s.subtitle && <div style={{ color: C.muted, fontSize: 13, marginTop: 4 }}>{s.subtitle}</div>}
+
+          {s.layout === "comparison" && s.left && s.right ? (
+            <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
+              {[s.left, s.right].map((col, k) => (
+                <div key={k} style={{ flex: 1, background: C.card, borderRadius: 8, padding: 10 }}>
+                  <div className="sm-display" style={{ color: color, fontSize: 12.5, fontWeight: 600 }}>{col.label}</div>
+                  <ul style={{ margin: "4px 0 0", paddingLeft: 16, color: C.muted, fontSize: 12.5 }}>
+                    {col.bullets?.map((b, j) => <li key={j}>{b}</li>)}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          ) : s.layout === "quote" && s.quoteText ? (
+            <div style={{ marginTop: 8, padding: "10px 4px", borderLeft: `2px solid ${color}`, paddingLeft: 12 }}>
+              <div className="sm-display" style={{ color: C.text, fontSize: 15, fontStyle: "italic" }}>&ldquo;{s.quoteText}&rdquo;</div>
+            </div>
+          ) : (
+            <ul style={{ margin: "6px 0 0", paddingLeft: 18, color: C.muted, fontSize: 13 }}>
+              {s.bullets?.map((b, j) => <li key={j}>{b}</li>)}
+            </ul>
+          )}
+
+          {s.closing && <div style={{ color: color, fontSize: 13, marginTop: 8, fontWeight: 600 }}>{s.closing}</div>}
           {s.chartData && <MiniBarChart data={s.chartData} color={color} />}
         </div>
       ))}
@@ -447,63 +880,115 @@ function SlidePreviewList({ slides, color }) {
   );
 }
 
-async function generateSlideContent(topic, index, total, lang, userId, paymentRequestId) {
+function getLayoutForIndex(index, total) {
+  if (index === 1) return "title";
+  if (index === total) return "conclusion";
+  if (index === 2 && total >= 5) return "agenda";
+  const cycle = ["content", "stat", "comparison", "quote"];
+  const startOffset = total >= 5 ? 3 : 2;
+  const pos = index - startOffset;
+  if (pos < 0) return "content";
+  return cycle[pos % cycle.length];
+}
+
+async function generateSlideContent(topic, index, total, lang, layout, avoid) {
   try {
-    return await apiJson("/api/generate/slide", "POST", { topic, index, total, lang, userId, paymentRequestId });
+    const slide = await apiJson("/api/generate/slide", "POST", { topic, index, total, lang, layout, avoid });
+    return { ...slide, layout };
   } catch (e) {
     console.error("Slide generation failed:", e);
-    return { title: `${topic} — ${index}`, bullets: ["..."], chartData: null };
+    return { title: `${topic} — ${index}`, bullets: ["..."], layout };
   }
 }
 
 function hexNoHash(hex) { return (hex || "#E8A33D").replace("#", ""); }
 
+const PPTX_BG = "12141C";
+const PPTX_CARD = "1E212E";
+const PPTX_TEXT = "F2F0EA";
+const PPTX_MUTED = "9AA2B5";
+
 async function downloadPresentation({ title, slides, color }) {
-  if (typeof PptxGenJS === "undefined") { alert("PowerPoint engine hasn't loaded yet — please wait a moment and try again."); return; }
+  if (typeof PptxGenJS === "undefined") {
+    alert("PowerPoint engine hasn't loaded yet — please wait a moment and try again.");
+    return;
+  }
   const pptx = new PptxGenJS();
   pptx.defineLayout({ name: "SM", width: 10, height: 5.63 });
   pptx.layout = "SM";
   const accent = hexNoHash(color);
+
+  // --- Cover slide ---
+  const first = slides[0] || {};
   const cover = pptx.addSlide();
-  cover.background = { color: "12141C" };
-  cover.addShape(pptx.ShapeType.rect, { x: 0, y: 2.55, w: 10, h: 0.06, fill: { color: accent } });
-  cover.addText(title, { x: 0.6, y: 1.9, w: 8.8, h: 1.3, fontSize: 32, bold: true, color: "F2F0EA", fontFace: "Arial", align: "left" });
-  cover.addText("SlideMaker", { x: 0.6, y: 4.9, w: 6, h: 0.4, fontSize: 12, color: "8B93A7", fontFace: "Arial" });
-  slides.forEach((s, i) => {
+  cover.background = { color: PPTX_BG };
+  cover.addText(title, { x: 0.7, y: 2.0, w: 8.6, h: 1.3, fontSize: 34, bold: true, color: PPTX_TEXT, fontFace: "Arial", align: "left", margin: 0 });
+  if (first.subtitle) {
+    cover.addText(first.subtitle, { x: 0.7, y: 3.05, w: 8.2, h: 0.7, fontSize: 15, color: accent, fontFace: "Arial", margin: 0 });
+  }
+  cover.addText("SlideMaker", { x: 0.7, y: 5.1, w: 6, h: 0.35, fontSize: 11, color: PPTX_MUTED, fontFace: "Arial", margin: 0 });
+
+  // Skip index 0 (used as cover above) only if it was a "title" layout; otherwise render all
+  const bodySlides = slides[0]?.layout === "title" ? slides.slice(1) : slides;
+
+  bodySlides.forEach((s, i) => {
     const slide = pptx.addSlide();
-    slide.background = { color: "1E212E" };
-    slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 0.12, h: 5.63, fill: { color: accent } });
-    slide.addText(String(i + 1).padStart(2, "0"), { x: 0.45, y: 0.3, w: 1, h: 0.35, fontSize: 11, color: accent, fontFace: "Courier New" });
-    slide.addText(s.title || "", { x: 0.45, y: 0.65, w: 9.1, h: 0.7, fontSize: 24, bold: true, color: "F2F0EA", fontFace: "Arial" });
-    const bulletText = (s.bullets || []).map((b) => ({ text: b, options: { bullet: { code: "25AA" }, breakLine: true, color: "C7CCDA" } }));
-    const hasChart = !!s.chartData;
-    slide.addText(bulletText, { x: 0.45, y: 1.5, w: hasChart ? 4.6 : 9.1, h: 3.6, fontSize: 15, fontFace: "Arial", valign: "top", lineSpacingMultiple: 1.3 });
-    if (hasChart && s.chartData.labels && s.chartData.values) {
-      const chartData = [{
-        name: "Ma'lumotlar",
-        labels: s.chartData.labels,
-        values: s.chartData.values
-      }];
-      try {
-        slide.addChart(pptx.ChartType.bar, chartData, {
-          x: 5.3, y: 1.5, w: 4.2, h: 3.6,
-          chartColors: [accent],
-          showLegend: false,
-          showTitle: false,
-          catAxisLabelColor: "8B93A7",
-          valAxisLabelColor: "8B93A7",
-          dataLabelColor: "F2F0EA",
-          showValue: true,
-          barDir: "col",
-          barGapWidthPct: 35
-        });
-      } catch (e) {
-        console.error("Chart error:", e);
-        // If chart fails, add bullets instead
-        slide.addText([{ text: "📊 " + s.chartData.labels.join(", "), options: { color: "C7CCDA", breakLine: true } }], { x: 5.3, y: 1.5, w: 4.2, h: 3.6, fontSize: 14, fontFace: "Arial" });
+    slide.background = { color: PPTX_BG };
+    const num = String(i + 2).padStart(2, "0");
+    slide.addText(num, { x: 0.6, y: 0.35, w: 1, h: 0.35, fontSize: 11, color: accent, fontFace: "Courier New", margin: 0 });
+    slide.addText(s.title || "", { x: 0.6, y: 0.68, w: 8.8, h: 0.7, fontSize: 26, bold: true, color: PPTX_TEXT, fontFace: "Arial", margin: 0 });
+
+    const layout = s.layout || "content";
+
+    if (layout === "agenda") {
+      const items = s.bullets || [];
+      const rowH = 3.6 / Math.max(items.length, 1);
+      items.forEach((item, idx) => {
+        const y = 1.55 + idx * rowH;
+        slide.addText(String(idx + 1).padStart(2, "0"), { x: 0.6, y, w: 0.7, h: rowH - 0.12, fontSize: 20, bold: true, color: accent, fontFace: "Arial", valign: "middle", margin: 0 });
+        slide.addText(item, { x: 1.4, y, w: 8.0, h: rowH - 0.12, fontSize: 17, color: PPTX_TEXT, fontFace: "Arial", valign: "middle", margin: 0 });
+      });
+    } else if (layout === "comparison" && s.left && s.right) {
+      [s.left, s.right].forEach((col, k) => {
+        const x = 0.6 + k * 4.5;
+        slide.addShape(pptx.ShapeType.roundRect, { x, y: 1.55, w: 4.2, h: 3.7, rectRadius: 0.08, fill: { color: PPTX_CARD }, line: { type: "none" } });
+        slide.addText(col.label || "", { x: x + 0.25, y: 1.75, w: 3.7, h: 0.5, fontSize: 15, bold: true, color: accent, fontFace: "Arial", margin: 0 });
+        const bulletText = (col.bullets || []).map((b, bi, arr) => ({ text: b, options: { bullet: { code: "25AA" }, breakLine: bi < arr.length - 1, color: PPTX_TEXT } }));
+        slide.addText(bulletText, { x: x + 0.25, y: 2.3, w: 3.7, h: 2.75, fontSize: 13, fontFace: "Arial", valign: "top", lineSpacingMultiple: 1.3, margin: 0 });
+      });
+    } else if (layout === "quote" && s.quoteText) {
+      slide.addText(`"${s.quoteText}"`, { x: 0.8, y: 1.9, w: 8.4, h: 1.8, fontSize: 24, italic: true, color: PPTX_TEXT, fontFace: "Arial", align: "left", valign: "middle", margin: 0 });
+      if (s.bullets && s.bullets.length) {
+        const bulletText = s.bullets.map((b, bi, arr) => ({ text: b, options: { bullet: { code: "25AA" }, breakLine: bi < arr.length - 1, color: PPTX_MUTED } }));
+        slide.addText(bulletText, { x: 0.8, y: 3.9, w: 8.2, h: 1.3, fontSize: 13, fontFace: "Arial", valign: "top", lineSpacingMultiple: 1.3, margin: 0 });
       }
+    } else if (layout === "stat" && s.chartData) {
+      const bulletText = (s.bullets || []).map((b, bi, arr) => ({ text: b, options: { bullet: { code: "25AA" }, breakLine: bi < arr.length - 1, color: PPTX_TEXT } }));
+      slide.addText(bulletText, { x: 0.6, y: 1.6, w: 4.0, h: 3.6, fontSize: 14, fontFace: "Arial", valign: "top", lineSpacingMultiple: 1.35, margin: 0 });
+      slide.addChart(pptx.ChartType.bar, [{ name: "", labels: s.chartData.labels, values: s.chartData.values }], {
+        x: 4.9, y: 1.6, w: 4.5, h: 3.6,
+        chartColors: [accent],
+        showLegend: false,
+        showTitle: false,
+        catAxisLabelColor: PPTX_MUTED,
+        valAxisLabelColor: PPTX_MUTED,
+        dataLabelColor: PPTX_TEXT,
+        showValue: true,
+        barGapWidthPct: 35,
+      });
+    } else if (layout === "conclusion") {
+      const bulletText = (s.bullets || []).map((b, bi, arr) => ({ text: b, options: { bullet: { code: "25AA" }, breakLine: bi < arr.length - 1, color: PPTX_TEXT } }));
+      slide.addText(bulletText, { x: 0.6, y: 1.6, w: 8.8, h: 2.6, fontSize: 16, fontFace: "Arial", valign: "top", lineSpacingMultiple: 1.4, margin: 0 });
+      if (s.closing) {
+        slide.addText(s.closing, { x: 0.6, y: 4.35, w: 8.8, h: 0.8, fontSize: 16, bold: true, color: accent, fontFace: "Arial", margin: 0 });
+      }
+    } else {
+      // default "content" layout
+      const bulletText = (s.bullets || []).map((b, bi, arr) => ({ text: b, options: { bullet: { code: "25AA" }, breakLine: bi < arr.length - 1, color: PPTX_TEXT } }));
+      slide.addText(bulletText, { x: 0.6, y: 1.6, w: 8.8, h: 3.6, fontSize: 16, fontFace: "Arial", valign: "top", lineSpacingMultiple: 1.4, margin: 0 });
     }
   });
+
   await pptx.writeFile({ fileName: `${title.slice(0, 40).replace(/[^a-z0-9]/gi, "_") || "presentation"}.pptx` });
 }
 
@@ -524,38 +1009,61 @@ function MiniBarChart({ data, color }) {
 }
 
 function Icon({ glyph, size = 18, color, style, className }) {
-  return <span className={className} style={{ fontSize: size, color, lineHeight: 1, display: "inline-flex", alignItems: "center", justifyContent: "center", fontStyle: "normal", ...style }}>{glyph}</span>;
+  return (
+    <span className={className} style={{ fontSize: size, color, lineHeight: 1, display: "inline-flex", alignItems: "center", justifyContent: "center", fontStyle: "normal", ...style }}>
+      {glyph}
+    </span>
+  );
 }
 
 function Spinner({ size = 18, color, style }) {
-  return <span style={{ display: "inline-block", width: size, height: size, border: `2px solid ${color || C.violet}33`, borderTopColor: color || C.violet, borderRadius: "50%", animation: "spin 0.8s linear infinite", ...style }} />;
+  return (
+    <span
+      style={{
+        display: "inline-block", width: size, height: size,
+        border: `2px solid ${color || C.violet}33`, borderTopColor: color || C.violet,
+        borderRadius: "50%", animation: "spin 0.8s linear infinite", ...style,
+      }}
+    />
+  );
 }
 
+/* ---------------------------------------------------------------
+   MY PRESENTATIONS
+--------------------------------------------------------------- */
 function MyPresentations({ lang, setLang, setView, list, loading }) {
   const t = T[lang];
   return (
     <div style={{ minHeight: "100vh", background: C.bg }}>
       <TopBar lang={lang} setLang={setLang} onBack={() => setView("home")} title={t.mineTitle} />
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "10px 20px 60px" }}>
-        {loading ? <div style={{ color: C.muted, textAlign: "center", padding: 40 }}><Spinner size={22} color={C.violet} /></div> :
-          list.length === 0 ? <GhostCard style={{ marginTop: 20, textAlign: "center", color: C.muted }}>{t.mineEmpty}</GhostCard> :
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 20 }}>
-              {list.map((p) => (
-                <GhostCard key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <div className="sm-display" style={{ color: C.text, fontWeight: 600 }}>{p.title}</div>
-                    <div style={{ color: C.muted, fontSize: 12, marginTop: 4 }}>{p.slides.length} {t.slideCountUnit} · {new Date(p.createdAt).toLocaleDateString()}</div>
-                  </div>
-                  <button onClick={() => downloadPresentation({ title: p.title, slides: p.slides, color: p.color })} className="sm-btn" style={{ background: C.goldSoft, border: `1px solid ${C.gold}55`, color: C.gold, borderRadius: 10, padding: "8px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}><Icon glyph="⬇" size={15} /> {t.downloadBtn}</button>
-                </GhostCard>
-              ))}
-            </div>
-        }
+        {loading ? (
+          <div style={{ color: C.muted, textAlign: "center", padding: 40 }}><Spinner size={22} color={C.violet} /></div>
+        ) : list.length === 0 ? (
+          <GhostCard style={{ marginTop: 20, textAlign: "center", color: C.muted }}>{t.mineEmpty}</GhostCard>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 20 }}>
+            {list.map((p) => (
+              <GhostCard key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div className="sm-display" style={{ color: C.text, fontWeight: 600 }}>{p.title}</div>
+                  <div style={{ color: C.muted, fontSize: 12, marginTop: 4 }}>{p.slides.length} {t.slideCountUnit} · {new Date(p.createdAt).toLocaleDateString()}</div>
+                </div>
+                <button onClick={() => downloadPresentation({ title: p.title, slides: p.slides, color: p.color })} className="sm-btn" style={{ background: C.goldSoft, border: `1px solid ${C.gold}55`, color: C.gold, borderRadius: 10, padding: "8px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+                  <Icon glyph="⬇" size={15} /> {t.downloadBtn}
+                </button>
+              </GhostCard>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
+/* ---------------------------------------------------------------
+   SUBSCRIPTION
+--------------------------------------------------------------- */
 function Subscription({ lang, setLang, setView, cardInfo, userId }) {
   const t = T[lang];
   const [plan, setPlan] = useState(null);
@@ -571,7 +1079,7 @@ function Subscription({ lang, setLang, setView, cardInfo, userId }) {
         const mine = await api(`/api/payments/mine/${userId}`);
         const subs = mine.filter((r) => r.type === "subscription").sort((a, b) => b.createdAt - a.createdAt);
         if (subs[0]) { setStatus(subs[0].status); setActiveReqId(subs[0].id); }
-      } catch { }
+      } catch { /* ignore */ }
     })();
     return () => clearInterval(pollRef.current);
   }, [userId]);
@@ -579,17 +1087,26 @@ function Subscription({ lang, setLang, setView, cardInfo, userId }) {
   async function submit() {
     try {
       const form = new FormData();
-      form.append("userId", userId); form.append("type", "subscription"); form.append("plan", plan); form.append("checkImage", checkFile);
+      form.append("userId", userId);
+      form.append("type", "subscription");
+      form.append("plan", plan);
+      form.append("checkImage", checkFile);
       const created = await api("/api/payments", { method: "POST", body: form });
-      setActiveReqId(created.id); setStatus("pending");
+      setActiveReqId(created.id);
+      setStatus("pending");
       pollRef.current = setInterval(async () => {
         try {
           const mine = await api(`/api/payments/mine/${userId}`);
           const req = mine.find((r) => r.id === created.id);
-          if (req && req.status !== "pending") { clearInterval(pollRef.current); setStatus(req.status); }
-        } catch { }
+          if (req && req.status !== "pending") {
+            clearInterval(pollRef.current);
+            setStatus(req.status);
+          }
+        } catch { /* keep polling */ }
       }, 3500);
-    } catch (e) { alert("Xatolik: " + e.message); }
+    } catch (e) {
+      alert("Xatolik: " + e.message);
+    }
   }
 
   return (
@@ -597,9 +1114,15 @@ function Subscription({ lang, setLang, setView, cardInfo, userId }) {
       <TopBar lang={lang} setLang={setLang} onBack={() => setView("home")} title={t.subTitle} />
       <div style={{ maxWidth: 520, margin: "0 auto", padding: "10px 20px 60px" }}>
         {status === "approved" ? (
-          <GhostCard style={{ marginTop: 20, textAlign: "center" }}><Icon glyph="♛" size={36} color={C.gold} style={{ margin: "6px auto" }} /><div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 18 }}>{t.subActive}</div></GhostCard>
+          <GhostCard style={{ marginTop: 20, textAlign: "center" }}>
+            <Icon glyph="♛" size={36} color={C.gold} style={{ margin: "6px auto" }} />
+            <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 18 }}>{t.subActive}</div>
+          </GhostCard>
         ) : status === "pending" ? (
-          <GhostCard style={{ marginTop: 20, textAlign: "center" }}><Icon glyph="🕐" size={36} color={C.gold} style={{ margin: "6px auto", animation: "pulseGlow 1.6s ease-in-out infinite" }} /><div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 18 }}>{t.subPending}</div></GhostCard>
+          <GhostCard style={{ marginTop: 20, textAlign: "center" }}>
+            <Icon glyph="🕐" size={36} color={C.gold} style={{ margin: "6px auto", animation: "pulseGlow 1.6s ease-in-out infinite" }} />
+            <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 18 }}>{t.subPending}</div>
+          </GhostCard>
         ) : !plan ? (
           <div style={{ display: "flex", gap: 14, marginTop: 20, flexWrap: "wrap" }}>
             <PlanCard label={t.subMonthly} price="50,000" onClick={() => setPlan("monthly")} accent={C.gold} />
@@ -637,7 +1160,246 @@ function PlanCard({ label, price, onClick, accent, best }) {
   );
 }
 
+/* ---------------------------------------------------------------
+   ADMIN PANEL — hidden route, not linked from any UI.
+   Reachable only via URL hash #slidemaker-admin-2026.
+   Real auth: password is checked server-side (POST /api/admin/login)
+   which returns a JWT used for every admin request.
+--------------------------------------------------------------- */
 const ADMIN_HASH = "#slidemaker-admin-2026";
+
+function StatsTab({ usage, revenue, loading, confirmKind, setConfirmKind, clearingKind, clearHistory }) {
+  const HISTORY_ITEMS = [
+    { kind: "presentations", label: "Taqdimotlar tarixi" },
+    { kind: "payments", label: "To'lov so'rovlari tarixi" },
+    { kind: "usage", label: "Foydalanish (usage) jurnali" },
+  ];
+
+  if (loading && !usage && !revenue) {
+    return <div style={{ color: C.muted, textAlign: "center", padding: 40 }}>Yuklanmoqda...</div>;
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <GhostCard>
+        <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 15, marginBottom: 10 }}>💰 Daromad</div>
+        <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+          <StatBlock label="Bugun" value={`${(revenue?.today?.total || 0).toLocaleString()} so'm`} sub={`${revenue?.today?.count || 0} ta to'lov`} accent={C.gold} />
+          <StatBlock label="Jami" value={`${(revenue?.allTime?.total || 0).toLocaleString()} so'm`} sub={`${revenue?.allTime?.count || 0} ta to'lov`} accent={C.good} />
+        </div>
+      </GhostCard>
+
+      <GhostCard>
+        <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 15, marginBottom: 10 }}>⚡ AI Foydalanish (24 soat / jami)</div>
+        <div style={{ display: "flex", gap: 24, flexWrap: "wrap", marginBottom: 14 }}>
+          <StatBlock label="Bugungi so'rovlar" value={String(usage?.today?.calls || 0)} sub={`${usage?.today?.successes || 0} muvaffaqiyatli, ${usage?.today?.failures || 0} xato`} accent={C.violet} />
+          <StatBlock label="Bugungi tokenlar" value={(usage?.today?.tokens || 0).toLocaleString()} sub="taxminiy AI xarajat birligi" accent={C.violet} />
+          <StatBlock label="Jami so'rovlar" value={String(usage?.allTime?.calls || 0)} sub={`${usage?.allTime?.successes || 0} muvaffaqiyatli, ${usage?.allTime?.failures || 0} xato`} accent={C.muted} />
+        </div>
+        {usage?.byProviderToday?.length > 0 && (
+          <div>
+            <div style={{ color: C.muted, fontSize: 12, marginBottom: 6 }}>Bugun — provayder bo'yicha</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {usage.byProviderToday.map((p) => (
+                <div key={p.provider} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, background: C.bg2, borderRadius: 8, padding: "6px 10px" }}>
+                  <span className="sm-mono" style={{ color: C.text }}>{p.provider}</span>
+                  <span style={{ color: C.muted }}>{p.calls} so'rov · {p.tokens.toLocaleString()} token</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </GhostCard>
+
+      <GhostCard>
+        <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 15, marginBottom: 6 }}>🗑 Tarixni tozalash</div>
+        <div style={{ color: C.muted, fontSize: 12.5, marginBottom: 12 }}>Diqqat: bu amalni orqaga qaytarib bo'lmaydi.</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {HISTORY_ITEMS.map(({ kind, label }) => (
+            <div key={kind} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.bg2, borderRadius: 10, padding: "10px 12px" }}>
+              <span style={{ color: C.text, fontSize: 13.5 }}>{label}</span>
+              {confirmKind === kind ? (
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button
+                    onClick={() => clearHistory(kind)}
+                    disabled={clearingKind === kind}
+                    className="sm-btn"
+                    style={{ background: `${C.danger}22`, border: `1px solid ${C.danger}66`, color: C.danger, borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 12.5, fontWeight: 600 }}
+                  >
+                    {clearingKind === kind ? "..." : "Ha, tozalash"}
+                  </button>
+                  <button onClick={() => setConfirmKind(null)} className="sm-btn" style={{ background: "transparent", border: `1px solid ${C.line}`, color: C.muted, borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 12.5 }}>
+                    Bekor qilish
+                  </button>
+                </div>
+              ) : (
+                <button onClick={() => setConfirmKind(kind)} className="sm-btn" style={{ background: "transparent", border: `1px solid ${C.line}`, color: C.muted, borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 12.5 }}>
+                  Tozalash
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      </GhostCard>
+    </div>
+  );
+}
+
+function StatBlock({ label, value, sub, accent }) {
+  return (
+    <div>
+      <div style={{ color: C.muted, fontSize: 11.5 }}>{label}</div>
+      <div className="sm-display" style={{ color: accent, fontWeight: 700, fontSize: 22, marginTop: 2 }}>{value}</div>
+      {sub && <div style={{ color: C.muted, fontSize: 11 }}>{sub}</div>}
+    </div>
+  );
+}
+
+function ExamplesTab() {
+  const [list, setList] = useState([]);
+  const [listLoading, setListLoading] = useState(true);
+  const [title, setTitle] = useState("");
+  const [topic, setTopic] = useState("");
+  const [count, setCount] = useState(6);
+  const [exLang, setExLang] = useState("uz");
+  const [design, setDesign] = useState(DESIGNS[0]);
+  const [color, setColor] = useState(DESIGNS[0].accent);
+  const [generating, setGenerating] = useState(false);
+  const [genProgress, setGenProgress] = useState(0);
+  const [deletingId, setDeletingId] = useState(null);
+  const [error, setError] = useState("");
+
+  const loadList = useCallback(async () => {
+    setListLoading(true);
+    try {
+      setList(await api("/api/examples"));
+    } catch { /* ignore */ }
+    setListLoading(false);
+  }, []);
+
+  useEffect(() => { loadList(); }, [loadList]);
+
+  async function generateExample() {
+    if (!title.trim() || !topic.trim()) {
+      setError("Sarlavha va mavzuni kiriting");
+      return;
+    }
+    setError("");
+    setGenerating(true);
+    setGenProgress(0);
+    const generated = [];
+    try {
+      for (let i = 0; i < count; i++) {
+        const idx = i + 1;
+        const layout = getLayoutForIndex(idx, count);
+        const avoid = generated.map((s) => s.title).filter(Boolean);
+        const slide = await generateSlideContent(topic, idx, count, exLang, layout, avoid);
+        generated.push(slide);
+        setGenProgress(i + 1);
+      }
+      await apiJson(
+        "/api/examples", "POST",
+        { title, topic, lang: exLang, design: design.id, color, slides: generated },
+        { Authorization: `Bearer ${getAdminToken()}` }
+      );
+      setTitle("");
+      setTopic("");
+      loadList();
+    } catch (e) {
+      setError("Xatolik: " + e.message);
+    }
+    setGenerating(false);
+  }
+
+  async function deleteExample(id) {
+    setDeletingId(id);
+    try {
+      await api(`/api/examples/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${getAdminToken()}` } });
+      loadList();
+    } catch (e) {
+      alert("Xatolik: " + e.message);
+    }
+    setDeletingId(null);
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <GhostCard>
+        <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 15, marginBottom: 12 }}>➕ Yangi namuna yaratish</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <input
+            value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Namuna sarlavhasi (foydalanuvchiga ko'rinadi)"
+            disabled={generating}
+            style={{ background: C.bg2, border: `1px solid ${C.line}`, borderRadius: 10, padding: 10, color: C.text, fontSize: 13 }}
+          />
+          <input
+            value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="Mavzu (AI uchun)"
+            disabled={generating}
+            style={{ background: C.bg2, border: `1px solid ${C.line}`, borderRadius: 10, padding: 10, color: C.text, fontSize: 13 }}
+          />
+          <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+            <label style={{ color: C.muted, fontSize: 12 }}>Slaydlar: <span className="sm-mono" style={{ color: C.gold }}>{count}</span></label>
+            <input type="range" min={3} max={12} value={count} disabled={generating} onChange={(e) => setCount(Number(e.target.value))} style={{ flex: 1, minWidth: 120, accentColor: C.gold }} />
+            <select value={exLang} disabled={generating} onChange={(e) => setExLang(e.target.value)} style={{ background: C.bg2, border: `1px solid ${C.line}`, borderRadius: 8, padding: "6px 8px", color: C.text, fontSize: 12.5 }}>
+              <option value="uz">O'zbek</option>
+              <option value="ru">Русский</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {DESIGNS.map((d) => (
+              <button
+                key={d.id} disabled={generating}
+                onClick={() => { setDesign(d); setColor(d.accent); }}
+                className="sm-btn"
+                style={{ padding: "5px 10px", borderRadius: 8, border: design.id === d.id ? `1.5px solid ${d.accent}` : `1px solid ${C.line}`, background: C.bg2, color: design.id === d.id ? d.accent : C.muted, cursor: "pointer", fontSize: 11.5 }}
+              >
+                {d.name}
+              </button>
+            ))}
+          </div>
+          {error && <div style={{ color: C.danger, fontSize: 12.5 }}>{error}</div>}
+          {generating ? (
+            <div style={{ textAlign: "center", padding: "6px 0" }}>
+              <Spinner size={22} color={C.violet} style={{ margin: "0 auto 6px" }} />
+              <div className="sm-mono" style={{ color: C.muted, fontSize: 12 }}>{genProgress}/{count} slayd tayyorlanmoqda...</div>
+            </div>
+          ) : (
+            <NextBtn onClick={generateExample} label="Yaratish va saqlash" />
+          )}
+        </div>
+      </GhostCard>
+
+      <GhostCard>
+        <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 15, marginBottom: 10 }}>📚 Mavjud namunalar</div>
+        {listLoading ? (
+          <div style={{ color: C.muted, textAlign: "center", padding: 20 }}>Yuklanmoqda...</div>
+        ) : list.length === 0 ? (
+          <div style={{ color: C.muted, fontSize: 13, textAlign: "center", padding: 10 }}>Hozircha namunalar yo'q</div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {list.map((ex) => (
+              <div key={ex.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: C.bg2, borderRadius: 10, padding: "10px 12px" }}>
+                <div>
+                  <div style={{ color: C.text, fontSize: 13.5, fontWeight: 600 }}>{ex.title}</div>
+                  <div className="sm-mono" style={{ color: C.muted, fontSize: 11 }}>{ex.slides?.length || 0} slayd · {new Date(Number(ex.createdAt)).toLocaleDateString()}</div>
+                </div>
+                <button
+                  onClick={() => deleteExample(ex.id)}
+                  disabled={deletingId === ex.id}
+                  className="sm-btn"
+                  style={{ background: `${C.danger}22`, border: `1px solid ${C.danger}66`, color: C.danger, borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 12 }}
+                >
+                  {deletingId === ex.id ? "..." : "O'chirish"}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </GhostCard>
+    </div>
+  );
+}
 
 function AdminPanel() {
   const [authed, setAuthed] = useState(!!getAdminToken());
@@ -649,13 +1411,20 @@ function AdminPanel() {
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
   const [savedMsg, setSavedMsg] = useState("");
+  const [usage, setUsage] = useState(null);
+  const [revenue, setRevenue] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(false);
+  const [clearingKind, setClearingKind] = useState(null);
+  const [confirmKind, setConfirmKind] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const items = await api("/api/payments", { headers: { Authorization: `Bearer ${getAdminToken()}` } });
       setRequests(items);
-    } catch (e) { if (String(e.message).includes("401")) { localStorage.removeItem("sm_admin_token"); setAuthed(false); } }
+    } catch (e) {
+      if (String(e.message).includes("401")) { localStorage.removeItem("sm_admin_token"); setAuthed(false); }
+    }
     setLoading(false);
   }, []);
 
@@ -663,26 +1432,77 @@ function AdminPanel() {
     if (!authed) return;
     load();
     (async () => {
-      try { const ci = await api("/api/admin/card"); setCardNumber(ci.cardNumber || ""); setCardName(ci.cardName || ""); } catch { }
+      try {
+        const ci = await api("/api/admin/card");
+        setCardNumber(ci.cardNumber || "");
+        setCardName(ci.cardName || "");
+      } catch { /* ignore */ }
     })();
     const t = setInterval(load, 5000);
     return () => clearInterval(t);
   }, [authed, load]);
 
+  const loadStats = useCallback(async () => {
+    setStatsLoading(true);
+    try {
+      const [u, r] = await Promise.all([
+        api("/api/admin/usage", { headers: { Authorization: `Bearer ${getAdminToken()}` } }),
+        api("/api/admin/revenue", { headers: { Authorization: `Bearer ${getAdminToken()}` } }),
+      ]);
+      setUsage(u);
+      setRevenue(r);
+    } catch { /* ignore */ }
+    setStatsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (!authed || tab !== "stats") return;
+    loadStats();
+    const t = setInterval(loadStats, 8000);
+    return () => clearInterval(t);
+  }, [authed, tab, loadStats]);
+
+  async function clearHistory(kind) {
+    setClearingKind(kind);
+    try {
+      await api(`/api/admin/history/${kind}`, { method: "DELETE", headers: { Authorization: `Bearer ${getAdminToken()}` } });
+      setConfirmKind(null);
+      if (kind === "usage") loadStats();
+      if (kind === "payments") load();
+    } catch (e) {
+      alert("Xatolik: " + e.message);
+    }
+    setClearingKind(null);
+  }
+
   async function login() {
     setLoginError("");
-    try { const { token } = await apiJson("/api/admin/login", "POST", { password: pw }); localStorage.setItem("sm_admin_token", token); setAuthed(true); }
-    catch { setLoginError("Noto'g'ri parol"); }
+    try {
+      const { token } = await apiJson("/api/admin/login", "POST", { password: pw });
+      localStorage.setItem("sm_admin_token", token);
+      setAuthed(true);
+    } catch {
+      setLoginError("Noto'g'ri parol");
+    }
   }
 
   async function decide(req, status) {
-    try { await apiJson(`/api/payments/${req.id}`, "PATCH", { status }, { Authorization: `Bearer ${getAdminToken()}` }); load(); }
-    catch (e) { alert("Xatolik: " + e.message); }
+    try {
+      await apiJson(`/api/payments/${req.id}`, "PATCH", { status }, { Authorization: `Bearer ${getAdminToken()}` });
+      load();
+    } catch (e) {
+      alert("Xatolik: " + e.message);
+    }
   }
 
   async function saveCard() {
-    try { await apiJson("/api/admin/card", "PUT", { cardNumber, cardName }, { Authorization: `Bearer ${getAdminToken()}` }); setSavedMsg("Saqlandi ✓"); setTimeout(() => setSavedMsg(""), 2000); }
-    catch (e) { alert("Xatolik: " + e.message); }
+    try {
+      await apiJson("/api/admin/card", "PUT", { cardNumber, cardName }, { Authorization: `Bearer ${getAdminToken()}` });
+      setSavedMsg("Saqlandi ✓");
+      setTimeout(() => setSavedMsg(""), 2000);
+    } catch (e) {
+      alert("Xatolik: " + e.message);
+    }
   }
 
   if (!authed) {
@@ -691,7 +1511,14 @@ function AdminPanel() {
         <style>{FONTS}</style>
         <GhostCard style={{ width: 320 }}>
           <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 18, marginBottom: 12 }}>SlideMaker Admin</div>
-          <input type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Parol" onKeyDown={(e) => e.key === "Enter" && login()} style={{ width: "100%", background: C.bg2, border: `1px solid ${C.line}`, borderRadius: 10, padding: 10, color: C.text }} />
+          <input
+            type="password"
+            value={pw}
+            onChange={(e) => setPw(e.target.value)}
+            placeholder="Parol"
+            onKeyDown={(e) => e.key === "Enter" && login()}
+            style={{ width: "100%", background: C.bg2, border: `1px solid ${C.line}`, borderRadius: 10, padding: 10, color: C.text }}
+          />
           {loginError && <div style={{ color: C.danger, fontSize: 12, marginTop: 6 }}>{loginError}</div>}
           <NextBtn onClick={login} label="Kirish" />
         </GhostCard>
@@ -706,13 +1533,16 @@ function AdminPanel() {
   return (
     <div style={{ minHeight: "100vh", background: C.bg }}>
       <style>{FONTS}</style>
-      <div style={{ padding: "18px 24px" }}><div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 18 }}>SlideMaker Admin</div></div>
+      <div style={{ padding: "18px 24px" }}>
+        <div className="sm-display" style={{ color: C.text, fontWeight: 700, fontSize: 18 }}>SlideMaker Admin</div>
+      </div>
       <div style={{ maxWidth: 820, margin: "0 auto", padding: "0 20px 60px" }}>
         <div style={{ display: "flex", gap: 8, marginBottom: 18 }}>
-          {[["slides", "Arizalar bo'limi"], ["sub", "Oylik obunachi arizalari"], ["card", "Karta sozlamalari"]].map(([id, label]) => (
+          {[["slides", "Arizalar bo'limi"], ["sub", "Oylik obunachi arizalari"], ["card", "Karta sozlamalari"], ["stats", "Statistika"], ["examples", "Namunalar"]].map(([id, label]) => (
             <button key={id} onClick={() => setTab(id)} className="sm-btn" style={{ padding: "9px 14px", borderRadius: 10, border: `1px solid ${tab === id ? C.gold : C.line}`, background: tab === id ? C.goldSoft : C.card, color: tab === id ? C.gold : C.muted, cursor: "pointer", fontSize: 13 }}>{label}</button>
           ))}
         </div>
+
         {tab === "card" ? (
           <GhostCard>
             <label style={{ color: C.muted, fontSize: 13 }}>Karta raqami</label>
@@ -721,6 +1551,18 @@ function AdminPanel() {
             <input value={cardName} onChange={(e) => setCardName(e.target.value)} placeholder="Familiya Ism" style={{ width: "100%", marginTop: 4, background: C.bg2, border: `1px solid ${C.line}`, borderRadius: 10, padding: 10, color: C.text }} />
             <NextBtn onClick={saveCard} label={savedMsg || "Saqlash"} />
           </GhostCard>
+        ) : tab === "stats" ? (
+          <StatsTab
+            usage={usage}
+            revenue={revenue}
+            loading={statsLoading}
+            confirmKind={confirmKind}
+            setConfirmKind={setConfirmKind}
+            clearingKind={clearingKind}
+            clearHistory={clearHistory}
+          />
+        ) : tab === "examples" ? (
+          <ExamplesTab />
         ) : loading && shown.length === 0 ? (
           <div style={{ color: C.muted, textAlign: "center", padding: 40 }}>Yuklanmoqda...</div>
         ) : shown.length === 0 ? (
@@ -732,9 +1574,13 @@ function AdminPanel() {
                 <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
                   <div>
                     <div className="sm-mono" style={{ color: C.muted, fontSize: 11 }}>{r.userId} · {new Date(r.createdAt).toLocaleString()}</div>
-                    <div className="sm-display" style={{ color: C.text, fontWeight: 600, marginTop: 4 }}>{r.type === "slides" ? `${r.slidesCount} slayd` : (r.plan === "monthly" ? "1 oylik obuna" : "1 yillik obuna")}</div>
+                    <div className="sm-display" style={{ color: C.text, fontWeight: 600, marginTop: 4 }}>
+                      {r.type === "slides" ? `${r.slidesCount} slayd` : (r.plan === "monthly" ? "1 oylik obuna" : "1 yillik obuna")}
+                    </div>
                     <div className="sm-mono" style={{ color: C.gold, marginTop: 2 }}>{r.price.toLocaleString()} so'm</div>
-                    <div style={{ marginTop: 6 }}><StatusPill status={r.status} /></div>
+                    <div style={{ marginTop: 6 }}>
+                      <StatusPill status={r.status} />
+                    </div>
                   </div>
                   {r.hasImage && <img src={`${API_BASE}/api/payments/${r.id}/image`} alt="check" style={{ maxHeight: 130, borderRadius: 8, border: `1px solid ${C.line}` }} />}
                 </div>
@@ -759,6 +1605,9 @@ function StatusPill({ status }) {
   return <span className="sm-mono" style={{ color, background: `${color}1a`, border: `1px solid ${color}55`, borderRadius: 999, padding: "2px 10px", fontSize: 11 }}>{label}</span>;
 }
 
+/* ---------------------------------------------------------------
+   ROOT APP
+--------------------------------------------------------------- */
 function MainApp() {
   const [view, setView] = useState("home");
   const [lang, setLang] = useState("uz");
@@ -770,13 +1619,19 @@ function MainApp() {
   useEffect(() => {
     (async () => {
       setUserId(getOrCreateUserId());
-      try { const ci = await api("/api/admin/card"); setCardInfo(ci); } catch { }
+      try {
+        const ci = await api("/api/admin/card");
+        setCardInfo(ci);
+      } catch { /* backend not reachable yet — card just shows placeholder */ }
     })();
   }, []);
 
   const refreshMine = useCallback(async () => {
     setMineLoading(true);
-    try { const items = await api(`/api/presentations/${getOrCreateUserId()}`); setMineList(items); } catch { }
+    try {
+      const items = await api(`/api/presentations/${getOrCreateUserId()}`);
+      setMineList(items);
+    } catch { /* ignore */ }
     setMineLoading(false);
   }, []);
 
@@ -795,12 +1650,14 @@ function MainApp() {
 
 function App() {
   const [isAdminRoute, setIsAdminRoute] = useState(false);
+
   useEffect(() => {
     setIsAdminRoute(window.location.hash === ADMIN_HASH);
     const onHash = () => setIsAdminRoute(window.location.hash === ADMIN_HASH);
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
+
   return isAdminRoute ? <AdminPanel /> : <MainApp />;
 }
 
